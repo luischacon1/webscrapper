@@ -1,33 +1,25 @@
 # Dependencies
 node_modules/
 
-# Output files
+# Output files (keep structure, ignore data)
 output/*.csv
 output/*.xlsx
-*.csv
-*.xlsx
+output/*.json
+!output/.gitkeep
 
 # Logs
-logs/
 *.log
 npm-debug.log*
 
 # OS files
 .DS_Store
 Thumbs.db
+~$*
 
 # IDE
 .idea/
 .vscode/
-*.swp
-*.swo
 
 # Environment
 .env
 .env.local
-.env.*.local
-
-# Temporary files
-tmp/
-temp/
-
