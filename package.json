@@ -1,0 +1,25 @@
+{
+  "name": "webscrapper",
+  "version": "1.0.0",
+  "description": "Web scraper for proveedores.com - FMCG Team internal use",
+  "main": "src/scraper.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/scraper.js",
+    "scrape": "node src/scraper.js"
+  },
+  "keywords": [
+    "webscraper",
+    "puppeteer",
+    "proveedores",
+    "fmcg"
+  ],
+  "author": "FMCG Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "puppeteer": "^23.0.0",
+    "xlsx": "^0.18.5"
+  }
+}
