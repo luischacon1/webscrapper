@@ -9,13 +9,13 @@ const __dirname = path.dirname(__filename);
 
 // Current category configuration
 const CONFIG = {
-  category: { name: 'Alimentos Dietéticos', url: 'https://www.proveedores.com/alimentos-dieteticos/' },
+  category: { name: 'Pescado y Marisco', url: 'https://www.proveedores.com/pescado-y-marisco/' },
   startPage: 1,
-  maxPages: 100,
+  maxPages: 200,
   delayBetweenRequests: 600,
   outputDir: path.join(__dirname, '..', 'output'),
   statusFile: path.join(__dirname, '..', 'output', 'status.json'),
-  outputFile: 'alimentos_dieteticos.xlsx'
+  outputFile: 'pescado.xlsx'
 };
 
 async function delay(ms) {
@@ -157,7 +157,26 @@ async function main() {
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
 
-  const allResults = [];
+  let allResults = [];
+  
+  // Load existing data if continuing from a previous page
+  const outputPath = path.join(CONFIG.outputDir, CONFIG.outputFile);
+  if (CONFIG.startPage > 1 && fs.existsSync(outputPath)) {
+    const workbook = XLSX.readFile(outputPath);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const existing = XLSX.utils.sheet_to_json(sheet);
+    allResults = existing.map(r => ({
+      name: r.Name || '',
+      email: r.Email || '',
+      whatsapp: r.WhatsApp || '',
+      contacts: r.Contacts || '',
+      sede: r.SEDE || '',
+      providerType: r['Tipo de Proveedor'] || '',
+      category: r.Category || CONFIG.category.name,
+      url: r.URL || ''
+    }));
+    console.log(`📂 Loaded ${allResults.length} existing leads\n`);
+  }
 
   try {
     console.log(`📂 Category: ${CONFIG.category.name}`);
