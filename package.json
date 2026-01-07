@@ -5,9 +5,10 @@
   "main": "src/scraper.js",
   "type": "module",
   "scripts": {
-    "start": "node src/scraper.js",
-    "scrape": "node src/scraper.js",
-    "continue": "node src/scraper-continue.js"
+    "scrape": "node scrape.js",
+    "start": "node scrape.js",
+    "legacy:turbo": "node src/scraper-turbo.js",
+    "legacy:all": "node src/scraper-all.js"
   },
   "author": "FMCG Team",
   "license": "UNLICENSED",
