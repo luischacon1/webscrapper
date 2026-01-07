@@ -5,7 +5,11 @@ node_modules/
 output/*.csv
 output/*.xlsx
 output/*.json
+output/*.txt
 !output/.gitkeep
+
+# Category files (generated data)
+FMCG_Leads_Por_Categoria/
 
 # Logs
 *.log

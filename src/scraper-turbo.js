@@ -12,9 +12,18 @@ const categoryDir = path.join(__dirname, '..', 'FMCG_Leads_Por_Categoria');
 const statusFile = path.join(outputDir, 'status.json');
 
 // TURBO CONFIG
-const PARALLEL_TABS = 4;
-const DELAY_MS = 150;
-const TIMEOUT = 20000;
+const PARALLEL_TABS = 2; // Reducido para evitar detección de Cloudflare
+const DELAY_MS = 800; // Aumentado para parecer más humano
+const TIMEOUT = 45000; // Aumentado para dar más tiempo a cargar
+const RETRY_ATTEMPTS = 3; // Reintentos por URL
+
+// User agents reales para rotar
+const USER_AGENTS = [
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0'
+];
 
 // Remaining categories (starting from Carne - #11)
 const CATEGORIES = [
@@ -57,20 +66,125 @@ function updateStatus(data) {
   fs.writeFileSync(statusFile, JSON.stringify(data, null, 2));
 }
 
-async function scrapeProvider(page, url) {
+async function setupPage(page) {
+  const userAgent = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+  await page.setUserAgent(userAgent);
+  
+  // Headers adicionales para parecer más humano
+  await page.setExtraHTTPHeaders({
+    'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1',
+    'Cache-Control': 'max-age=0'
+  });
+
+  // Configurar viewport aleatorio
+  const viewports = [
+    { width: 1920, height: 1080 },
+    { width: 1366, height: 768 },
+    { width: 1440, height: 900 },
+    { width: 1536, height: 864 }
+  ];
+  const viewport = viewports[Math.floor(Math.random() * viewports.length)];
+  await page.setViewport(viewport);
+
+  // Ocultar que es un navegador automatizado
+  await page.evaluateOnNewDocument(() => {
+    Object.defineProperty(navigator, 'webdriver', {
+      get: () => false,
+    });
+    Object.defineProperty(navigator, 'plugins', {
+      get: () => [1, 2, 3, 4, 5],
+    });
+    Object.defineProperty(navigator, 'languages', {
+      get: () => ['es-ES', 'es', 'en-US', 'en'],
+    });
+    window.chrome = {
+      runtime: {},
+    };
+    const originalQuery = window.navigator.permissions.query;
+    window.navigator.permissions.query = (parameters) => (
+      parameters.name === 'notifications' ?
+        Promise.resolve({ state: Notification.permission }) :
+        originalQuery(parameters)
+    );
+  });
+}
+
+async function scrapeProvider(page, url, attempt = 1) {
   try {
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: TIMEOUT });
-    await delay(100);
+    // Delay aleatorio antes de cada request para parecer más humano
+    await delay(Math.random() * 1000 + 500);
+
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: TIMEOUT });
+    
+    // Simular comportamiento humano: scroll
+    await page.evaluate(() => {
+      window.scrollBy(0, Math.random() * 500);
+    });
+    
+    await delay(800 + Math.random() * 400);
+
+    // Verificar si hay error de Cloudflare
+    const hasError = await page.evaluate(() => {
+      const bodyText = document.body.innerText;
+      return bodyText.includes('Error 1015') || 
+             bodyText.includes('Access denied') ||
+             bodyText.includes('Ray ID') ||
+             document.querySelector('.cf-error-details');
+    });
+
+    if (hasError && attempt < RETRY_ATTEMPTS) {
+      await delay(3000 * attempt);
+      return await scrapeProvider(page, url, attempt + 1);
+    }
+
+    if (hasError) {
+      return null;
+    }
 
     return await page.evaluate(() => {
+      // Intentar múltiples selectores para el nombre
+      let name = '';
+      
+      // Intento 1: div.flex-1 h1
       const wrap = document.querySelector('div.flex-1');
-      if (!wrap) return null;
-
-      const name = wrap.querySelector('h1')?.textContent?.trim() || '';
+      if (wrap) {
+        name = wrap.querySelector('h1')?.textContent?.trim() || '';
+      }
+      
+      // Intento 2: Cualquier h1 en la página
+      if (!name) {
+        const h1 = document.querySelector('h1');
+        if (h1) name = h1.textContent?.trim() || '';
+      }
+      
+      // Intento 3: title de la página
+      if (!name) {
+        const title = document.title;
+        if (title && !title.includes('proveedores.com')) {
+          name = title.split('|')[0].trim();
+        }
+      }
+      
+      if (!name) return null;
+      
       let email = '', whatsapp = '';
       const contacts = [];
 
-      wrap.querySelectorAll('li').forEach(li => {
+      // Buscar email en toda la página
+      const allText = document.body.innerText;
+      const emailMatch = allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      if (emailMatch) email = emailMatch[0];
+
+      // Buscar en listas
+      document.querySelectorAll('li').forEach(li => {
         const text = li.textContent.trim();
         if (text.includes('@') && !email) email = text;
         if (li.classList.contains('cwhats-small')) whatsapp = text;
@@ -79,10 +193,24 @@ async function scrapeProvider(page, url) {
         }
       });
 
+      // Buscar WhatsApp en enlaces
+      document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(a => {
+        if (!whatsapp) {
+          const href = a.href;
+          const match = href.match(/(\+?\d{10,15})/);
+          if (match) whatsapp = match[1];
+        }
+      });
+
       let sede = '';
       const provinces = ['A Coruña','Álava','Albacete','Alicante','Almería','Asturias','Ávila','Badajoz','Barcelona','Burgos','Cáceres','Cádiz','Cantabria','Castellón','Ceuta','Ciudad Real','Córdoba','Cuenca','Girona','Granada','Guadalajara','Guipúzcoa','Huelva','Huesca','Baleares','Jaén','La Rioja','Las Palmas','León','Lleida','Lugo','Madrid','Málaga','Melilla','Murcia','Navarra','Ourense','Palencia','Pontevedra','Salamanca','Segovia','Sevilla','Soria','Tarragona','Tenerife','Teruel','Toledo','Valencia','Valladolid','Vizcaya','Zamora','Zaragoza'];
       const fullText = document.body.innerText;
-      for (const p of provinces) { if (fullText.includes(p)) { sede = p; break; } }
+      for (const p of provinces) { 
+        if (fullText.includes(p)) { 
+          sede = p; 
+          break; 
+        } 
+      }
 
       const types = [];
       const pageText = fullText.toLowerCase();
@@ -92,9 +220,31 @@ async function scrapeProvider(page, url) {
       if (pageText.includes('fabricante') || pageText.includes('fabricamos')) types.push('Fabricantes');
       if (pageText.includes('importador') || pageText.includes('importamos')) types.push('Importadores');
 
-      return { name, email, whatsapp, contacts: contacts.join(' | '), sede, providerType: types.join(', ') };
+      // Intentar extraer teléfonos de contacto
+      const phoneRegex = /(\+34\s?)?[96]\d{2}\s?\d{2}\s?\d{2}\s?\d{2}/g;
+      const phones = fullText.match(phoneRegex);
+      if (phones && phones.length > 0) {
+        contacts.push(...phones.slice(0, 3)); // Máximo 3 teléfonos
+      }
+
+      return { 
+        name, 
+        email, 
+        whatsapp, 
+        contacts: contacts.filter((v, i, a) => a.indexOf(v) === i).join(' | '), // Eliminar duplicados
+        sede, 
+        providerType: types.join(', ') 
+      };
     });
-  } catch { return null; }
+    
+    return data;
+  } catch (error) {
+    if (attempt < RETRY_ATTEMPTS) {
+      await delay(2000 * attempt);
+      return await scrapeProvider(page, url, attempt + 1);
+    }
+    return null;
+  }
 }
 
 async function getProviderLinks(page) {
@@ -117,10 +267,13 @@ async function getTotalPages(page) {
 
 async function scrapeInParallel(browser, urls, category) {
   const results = [];
-  const pages = await Promise.all(Array(PARALLEL_TABS).fill().map(() => browser.newPage()));
+  const pages = [];
   
-  for (const p of pages) {
-    await p.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+  // Crear páginas con configuración anti-detección
+  for (let i = 0; i < PARALLEL_TABS; i++) {
+    const page = await browser.newPage();
+    await setupPage(page);
+    pages.push(page);
   }
 
   for (let i = 0; i < urls.length; i += PARALLEL_TABS) {
@@ -129,7 +282,7 @@ async function scrapeInParallel(browser, urls, category) {
     const batchResults = await Promise.all(promises);
     
     batchResults.forEach((data, idx) => {
-      if (data) {
+      if (data && data.name) {
         results.push({
           Name: data.name,
           Email: data.email,
@@ -143,7 +296,8 @@ async function scrapeInParallel(browser, urls, category) {
       }
     });
 
-    await delay(DELAY_MS);
+    // Delay extra entre batches con componente aleatorio
+    await delay(DELAY_MS + Math.random() * 500);
   }
 
   await Promise.all(pages.map(p => p.close()));
@@ -194,11 +348,19 @@ async function main() {
 
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--disable-web-security',
+      '--disable-features=IsolateOrigins,site-per-process',
+      '--disable-blink-features=AutomationControlled'
+    ]
   });
 
   const mainPage = await browser.newPage();
-  await mainPage.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+  await setupPage(mainPage);
 
   for (const cat of CATEGORIES) {
     console.log(`\n${'='.repeat(60)}`);
@@ -209,8 +371,8 @@ async function main() {
     const allUrls = [];
 
     // Get all provider URLs
-    await mainPage.goto(cat.url, { waitUntil: 'domcontentloaded', timeout: TIMEOUT });
-    await delay(1000);
+    await mainPage.goto(cat.url, { waitUntil: 'networkidle2', timeout: TIMEOUT });
+    await delay(1500);
     
     const totalPages = await getTotalPages(mainPage);
     console.log(`📊 ${totalPages} pages detected`);
@@ -226,8 +388,8 @@ async function main() {
       });
 
       if (p > 1) {
-        await mainPage.goto(`${cat.url}?page=${p}`, { waitUntil: 'domcontentloaded', timeout: TIMEOUT });
-        await delay(300);
+        await mainPage.goto(`${cat.url}?page=${p}`, { waitUntil: 'networkidle2', timeout: TIMEOUT });
+        await delay(1000);
       }
       
       const links = await getProviderLinks(mainPage);
