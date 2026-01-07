@@ -1,4 +1,4 @@
-# 🕷️ Proveedores.com Web Scraper
+# 🕷️ WebScraperByLuis
 
 Professional web scraper for **proveedores.com** with advanced Cloudflare anti-detection system.
 
