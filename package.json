@@ -1,8 +1,8 @@
 {
-  "name": "webscrapper",
-  "version": "1.0.0",
-  "description": "Web scraper for proveedores.com - FMCG Team internal use",
-  "main": "src/scraper.js",
+  "name": "proveedores-scraper",
+  "version": "2.0.0",
+  "description": "Professional web scraper for proveedores.com with Cloudflare anti-detection",
+  "main": "scrape.js",
   "type": "module",
   "scripts": {
     "scrape": "node scrape.js",
@@ -10,9 +10,8 @@
     "legacy:turbo": "node src/scraper-turbo.js",
     "legacy:all": "node src/scraper-all.js"
   },
-  "author": "FMCG Team",
-  "license": "UNLICENSED",
-  "private": true,
+  "author": "",
+  "license": "MIT",
   "dependencies": {
     "csv-writer": "^1.6.0",
     "puppeteer": "^23.0.0",

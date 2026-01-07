@@ -20,14 +20,13 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuración
+// Configuration
 const CONFIG = {
-  PARALLEL_TABS: 2,        // Número de tabs en paralelo (2 para evitar detección)
-  DELAY_MS: 800,           // Delay entre batches
-  TIMEOUT: 45000,          // Timeout de carga de página
-  RETRY_ATTEMPTS: 3,       // Intentos de reintento por URL
-  OUTPUT_DIR: path.join(__dirname, 'output'),
-  CATEGORY_DIR: path.join(__dirname, 'FMCG_Leads_Por_Categoria')
+  PARALLEL_TABS: 2,        // Number of parallel tabs (2 to avoid detection)
+  DELAY_MS: 800,           // Delay between batches
+  TIMEOUT: 45000,          // Page load timeout
+  RETRY_ATTEMPTS: 3,       // Retry attempts per URL
+  OUTPUT_DIR: path.join(__dirname, 'output')
 };
 
 // User agents para rotar y evitar detección

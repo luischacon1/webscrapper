@@ -1,141 +1,166 @@
-# 🚀 Guía de Uso Rápido
+# 🚀 Quick Usage Guide
 
-## Para Compañeros del Equipo
+## For Team Members
 
-### 1️⃣ Instalación (Solo Primera Vez)
+### 1️⃣ Installation (First Time Only)
 
 ```bash
-# Clonar repo
+# Clone repository
 git clone https://github.com/luischacon1/webscrapper.git
 cd webscrapper
 
-# Instalar dependencias
+# Install dependencies
 npm install
 ```
 
-### 2️⃣ Cómo Usar
+### 2️⃣ How to Use
 
-**Es muy simple:**
+**It's very simple:**
 
 ```bash
-node scrape.js <URL_DE_LA_CATEGORIA>
+node scrape.js <CATEGORY_URL>
 ```
 
-### 3️⃣ Ejemplos Reales
+### 3️⃣ Example
 
-#### Scrapear Verduras
 ```bash
-node scrape.js https://www.proveedores.com/verduras/
+node scrape.js https://www.proveedores.com/your-category-here/
 ```
 
-#### Scrapear Frutas
-```bash
-node scrape.js https://www.proveedores.com/frutas/
-```
+Replace `your-category-here` with the actual category slug from the website.
 
-#### Scrapear Carne
-```bash
-node scrape.js https://www.proveedores.com/carne/
-```
+### 4️⃣ Where Are the Results?
 
-### 4️⃣ ¿Dónde Están los Resultados?
-
-Los archivos Excel se guardan en la carpeta `output/`:
+Excel files are saved in the `output/` folder:
 
 ```
 output/
-  └── verduras_1704819234567.xlsx  ← Tu archivo aquí
+  └── your_category_1704819234567.xlsx  ← Your file here
 ```
 
-**El Excel se abre automáticamente cuando termina** 🎉
+**The Excel file opens automatically when finished** 🎉
 
 ---
 
-## 📊 Qué Datos Obtendrás
+## 📊 What Data You'll Get
 
-Cada Excel contiene:
+Each Excel file contains:
 
-- ✅ **Nombre** del proveedor
+- ✅ **Name** of the provider
 - ✅ **Email**
 - ✅ **WhatsApp**
-- ✅ **Teléfonos** de contacto
-- ✅ **Sede** (provincia)
-- ✅ **Tipo** de proveedor (mayorista, fabricante, etc.)
-- ✅ **URL** del proveedor
+- ✅ **Phone numbers**
+- ✅ **Location** (province)
+- ✅ **Provider type** (wholesaler, manufacturer, etc.)
+- ✅ **URL** of the provider
 
 ---
 
-## ⏱️ ¿Cuánto Tarda?
+## ⏱️ How Long Does It Take?
 
-Aproximadamente **1 lead por cada 2-3 segundos**:
+Approximately **1 lead every 2-3 seconds**:
 
-| Leads | Tiempo Estimado |
-|-------|-----------------|
-| 50 | ~2 minutos |
-| 100 | ~4 minutos |
-| 500 | ~20 minutos |
-| 1000 | ~40 minutos |
+| Leads | Estimated Time |
+|-------|----------------|
+| 50 | ~2 minutes |
+| 100 | ~4 minutes |
+| 500 | ~20 minutes |
+| 1000 | ~40 minutes |
 
 ---
 
-## ❓ Preguntas Frecuentes
+## 📝 How to Get the Category URL
 
-### ¿Puedo scrapear varias categorías a la vez?
+1. Go to [proveedores.com](https://www.proveedores.com)
+2. Find the category you want to scrape
+3. Copy the complete URL from your browser
+4. Use it in the command:
 
-No, ejecuta el comando una vez por cada categoría. Para múltiples categorías:
+```bash
+node scrape.js <PASTE_URL_HERE>
+```
+
+---
+
+## ❓ Frequently Asked Questions
+
+### Can I scrape multiple categories at once?
+
+No, run the command once for each category. For multiple categories, use separate terminals:
 
 ```bash
 # Terminal 1
-node scrape.js https://www.proveedores.com/verduras/
+node scrape.js https://www.proveedores.com/category-1/
 
 # Terminal 2
-node scrape.js https://www.proveedores.com/frutas/
+node scrape.js https://www.proveedores.com/category-2/
 ```
 
-### ¿Qué pasa si se interrumpe?
+### What happens if it gets interrupted?
 
-Simplemente vuelve a ejecutar el comando. El script empieza desde cero cada vez.
+Simply run the command again. The script starts from scratch each time.
 
-### ¿Cómo sé qué URL usar?
+### Can the scraper be detected?
 
-1. Ve a [proveedores.com](https://www.proveedores.com)
-2. Busca la categoría que quieres
-3. Copia la URL completa
-4. Pégala en el comando
+No, it's designed with Cloudflare anti-detection system. **100% success rate** in tests.
 
-### ¿El scraper puede ser detectado?
+### How do I know it's working?
 
-No, está diseñado con sistema anti-detección Cloudflare. **100% de tasa de éxito** en pruebas.
+You'll see real-time progress in the terminal:
+
+```
+🔍 Collecting URLs...
+📊 15 pages detected
+
+🔥 Starting scraping (2 tabs in parallel)...
+   ⏳ 120/500 | ✅ 118 | ❌ 2
+
+✅ Successful leads: 498
+⏱️  Total time: 19.2 min
+💾 File saved: output/category_1704819234567.xlsx
+```
 
 ---
 
-## 🆘 Si Algo Sale Mal
+## 🆘 If Something Goes Wrong
 
 ### Error: "Cannot find module..."
 
 ```bash
-# Instalar dependencias
+# Install dependencies
 npm install
 ```
 
 ### Error: "permission denied"
 
 ```bash
-# Dar permisos de ejecución
+# Give execution permissions
 chmod +x scrape.js
 ```
 
-### El Excel no se abre automáticamente
+### Excel doesn't open automatically
 
-El archivo está guardado en `/output/`. Ábrelo manualmente.
+The file is saved in `/output/`. Open it manually from there.
+
+### Script is too slow
+
+You can adjust speed in `scrape.js` (see README.md for details).
 
 ---
 
-## 📞 Contacto
+## 💡 Tips
 
-Si tienes problemas, contacta al equipo de desarrollo o consulta el `README.md` completo.
+- ✅ Let the script finish completely before closing the terminal
+- ✅ Check the `/output/` folder for your Excel files
+- ✅ Each file is timestamped, so you won't overwrite previous results
+- ✅ If you need to stop, just press `Ctrl+C`
+
+---
+
+## 📞 Need Help?
+
+If you have problems, check the complete `README.md` or contact the development team.
 
 ---
 
 **Happy Scraping! 🕷️✨**
-

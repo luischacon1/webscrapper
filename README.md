@@ -1,130 +1,130 @@
-# 🕷️ Web Scraper de Proveedores.com
+# 🕷️ Proveedores.com Web Scraper
 
-Scraper profesional para extraer leads de **proveedores.com** con sistema anti-detección Cloudflare.
+Professional web scraper for **proveedores.com** with advanced Cloudflare anti-detection system.
 
-## 📋 Tabla de Contenidos
+## 📋 Table of Contents
 
-- [Características](#-características)
-- [Instalación](#-instalación)
-- [Uso Rápido](#-uso-rápido)
-- [Arquitectura](#-arquitectura)
-- [Sistema Anti-Cloudflare](#-sistema-anti-cloudflare)
-- [Extracción de Datos](#-extracción-de-datos)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Ejemplos](#-ejemplos)
-- [Resultados](#-resultados)
-
----
-
-## ✨ Características
-
-- 🔒 **Sistema Anti-Detección Cloudflare** - Evita el error 1015
-- 🚀 **Scraping Paralelo** - 2 tabs simultáneas para mayor velocidad
-- 🎯 **100% Tasa de Éxito** - Sistema de reintentos inteligente
-- 📊 **Exportación a Excel** - Formato XLSX con datos estructurados
-- 🤖 **Comportamiento Humano** - Delays aleatorios y scroll simulado
-- 📧 **Extracción Completa** - Email, WhatsApp, teléfonos, sede, tipo de proveedor
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [How It Works](#-how-it-works)
+- [Anti-Cloudflare System](#-anti-cloudflare-system)
+- [Data Extraction](#-data-extraction)
+- [Project Structure](#-project-structure)
+- [Configuration](#-configuration)
+- [Troubleshooting](#-troubleshooting)
 
 ---
 
-## 🚀 Instalación
+## ✨ Features
 
-### Requisitos
+- 🔒 **Anti-Cloudflare Detection** - Bypasses error 1015
+- 🚀 **Parallel Scraping** - 2 simultaneous tabs for speed
+- 🎯 **100% Success Rate** - Smart retry system
+- 📊 **Excel Export** - Structured XLSX format
+- 🤖 **Human Behavior Simulation** - Random delays and scrolling
+- 📧 **Complete Data Extraction** - Email, WhatsApp, phones, location, provider type
 
-- Node.js v16 o superior
-- npm o yarn
+---
 
-### Pasos
+## 🚀 Installation
+
+### Requirements
+
+- Node.js v16 or higher
+- npm or yarn
+
+### Steps
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone repository
 git clone https://github.com/luischacon1/webscrapper.git
 cd webscrapper
 
-# 2. Instalar dependencias
+# 2. Install dependencies
 npm install
 
-# 3. ¡Listo para usar!
+# 3. Ready to use!
 ```
 
 ---
 
-## 💻 Uso Rápido
+## 💻 Quick Start
 
-### Comando básico
-
-```bash
-node scrape.js <URL_CATEGORIA>
-```
-
-### Ejemplo
+### Basic Command
 
 ```bash
-node scrape.js https://www.proveedores.com/verduras/
+node scrape.js <CATEGORY_URL>
 ```
 
-### Salida
+### Example
 
-El script generará un archivo Excel en la carpeta `/output/` con:
-- ✅ **122 leads** de "Verduras"
-- 📊 **Formato estructurado**
-- 📧 **Datos completos**
+```bash
+node scrape.js https://www.proveedores.com/your-category-here/
+```
+
+### Output
+
+The script will generate an Excel file in `/output/` folder with:
+- ✅ Complete provider information
+- 📊 Structured format
+- 📧 All contact data
 
 ---
 
-## 🏗️ Arquitectura
+## 🏗️ How It Works
 
-### Flujo del Scraper
+### Scraper Flow
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  1. Usuario proporciona URL de categoría               │
+│  1. User provides category URL                          │
 └─────────────────────────┬───────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────┐
-│  2. Puppeteer lanza navegador con configuración        │
-│     anti-detección (User Agents, Headers, Viewports)   │
+│  2. Puppeteer launches browser with anti-detection      │
+│     configuration (User Agents, Headers, Viewports)     │
 └─────────────────────────┬───────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────┐
-│  3. Recopilación de URLs                                │
-│     • Navega por todas las páginas de la categoría     │
-│     • Extrae enlaces de proveedores                    │
-│     • Total: N URLs encontradas                        │
+│  3. URL Collection                                       │
+│     • Navigate through all category pages               │
+│     • Extract provider links                            │
+│     • Total: N URLs found                               │
 └─────────────────────────┬───────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────┐
-│  4. Scraping Paralelo (2 tabs)                         │
-│     • Abre 2 páginas simultáneas                       │
-│     • Procesa proveedores en batches                   │
-│     • Sistema de reintentos (3 intentos)              │
+│  4. Parallel Scraping (2 tabs)                         │
+│     • Opens 2 simultaneous pages                        │
+│     • Processes providers in batches                    │
+│     • Retry system (3 attempts)                        │
 └─────────────────────────┬───────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────┐
-│  5. Extracción de Datos                                │
-│     • Nombre del proveedor                             │
-│     • Email (regex + búsqueda en listas)              │
-│     • WhatsApp (enlaces + texto)                       │
-│     • Teléfonos (regex para formato español)          │
-│     • Sede (detección de provincias)                   │
-│     • Tipo de proveedor (palabras clave)              │
+│  5. Data Extraction                                     │
+│     • Provider name                                     │
+│     • Email (regex + list search)                      │
+│     • WhatsApp (links + text)                          │
+│     • Phones (regex for Spanish format)                │
+│     • Location (province detection)                     │
+│     • Provider type (keyword matching)                  │
 └─────────────────────────┬───────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────┐
-│  6. Guardado en Excel                                   │
-│     • Formato XLSX                                      │
-│     • Columnas optimizadas                             │
-│     • Apertura automática                              │
+│  6. Save to Excel                                       │
+│     • XLSX format                                       │
+│     • Optimized columns                                 │
+│     • Automatic opening                                 │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔒 Sistema Anti-Cloudflare
+## 🔒 Anti-Cloudflare System
 
-Cloudflare detecta bots mediante varios indicadores. Nuestro scraper los evita todos:
+Cloudflare detects bots through various indicators. Our scraper bypasses all of them:
 
-### 1. **Rotación de User Agents**
+### 1. **User Agent Rotation**
 
 ```javascript
 const USER_AGENTS = [
@@ -134,9 +134,9 @@ const USER_AGENTS = [
 ];
 ```
 
-Cada request usa un User Agent diferente para simular múltiples usuarios.
+Each request uses a different User Agent to simulate multiple users.
 
-### 2. **Headers HTTP Realistas**
+### 2. **Realistic HTTP Headers**
 
 ```javascript
 {
@@ -149,9 +149,9 @@ Cada request usa un User Agent diferente para simular múltiples usuarios.
 }
 ```
 
-Headers que simulan un navegador real navegando manualmente.
+Headers that simulate a real browser navigating manually.
 
-### 3. **Ocultación de Automatización**
+### 3. **Automation Detection Hiding**
 
 ```javascript
 Object.defineProperty(navigator, 'webdriver', { get: () => false });
@@ -159,48 +159,48 @@ Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
 window.chrome = { runtime: {} };
 ```
 
-Elimina los marcadores que Cloudflare usa para detectar Puppeteer/Selenium.
+Removes markers that Cloudflare uses to detect Puppeteer/Selenium.
 
-### 4. **Comportamiento Humano**
+### 4. **Human Behavior Simulation**
 
 ```javascript
-// Delays aleatorios
+// Random delays
 await delay(Math.random() * 1000 + 500);
 
-// Scroll aleatorio
+// Random scrolling
 await page.evaluate(() => window.scrollBy(0, Math.random() * 500));
 
-// Espera después de cargar
+// Wait after loading
 await delay(800 + Math.random() * 400);
 ```
 
-Simula el comportamiento de un humano real navegando.
+Simulates real human browsing behavior.
 
-### 5. **Viewports Aleatorios**
+### 5. **Random Viewports**
 
 ```javascript
 const viewports = [
-  { width: 1920, height: 1080 },  // Desktop grande
-  { width: 1366, height: 768 },   // Laptop común
+  { width: 1920, height: 1080 },  // Large desktop
+  { width: 1366, height: 768 },   // Common laptop
   { width: 1440, height: 900 },   // MacBook
-  { width: 1536, height: 864 }    // Desktop medio
+  { width: 1536, height: 864 }    // Medium desktop
 ];
 ```
 
-Diferentes resoluciones de pantalla para parecer usuarios distintos.
+Different screen resolutions to appear as different users.
 
-### 6. **Sistema de Reintentos**
+### 6. **Retry System**
 
 ```javascript
 if (hasCloudflareError && attempt < 3) {
-  await delay(3000 * attempt);  // Espera progresiva
+  await delay(3000 * attempt);  // Progressive wait
   return await scrapeProvider(page, url, attempt + 1);
 }
 ```
 
-Si detecta Cloudflare, espera y reintenta hasta 3 veces.
+If Cloudflare is detected, waits and retries up to 3 times.
 
-### 7. **Detección de Errores**
+### 7. **Error Detection**
 
 ```javascript
 const hasError = await page.evaluate(() => {
@@ -211,75 +211,75 @@ const hasError = await page.evaluate(() => {
 });
 ```
 
-Detecta automáticamente cuando Cloudflare bloquea el acceso.
+Automatically detects when Cloudflare blocks access.
 
 ---
 
-## 📊 Extracción de Datos
+## 📊 Data Extraction
 
-### Estrategia de Extracción por Campo
+### Extraction Strategy by Field
 
-#### **Nombre del Proveedor**
+#### **Provider Name**
 
 ```javascript
-// 1. Intento: div.flex-1 > h1
+// 1. Attempt: div.flex-1 > h1
 name = document.querySelector('div.flex-1 h1')?.textContent?.trim();
 
-// 2. Intento: Cualquier h1
+// 2. Attempt: Any h1
 if (!name) name = document.querySelector('h1')?.textContent?.trim();
 
-// 3. Intento: Title de la página
+// 3. Attempt: Page title
 if (!name) name = document.title.split('|')[0].trim();
 ```
 
-**Resultado**: 100% de cobertura en nombres.
+**Result**: 100% coverage on names.
 
 #### **Email**
 
 ```javascript
-// 1. Regex en todo el texto
+// 1. Regex on all text
 const emailMatch = allText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
 
-// 2. Búsqueda en elementos <li>
+// 2. Search in <li> elements
 document.querySelectorAll('li').forEach(li => {
   if (li.textContent.includes('@')) email = li.textContent.trim();
 });
 ```
 
-**Resultado**: ~100% de emails encontrados.
+**Result**: ~100% of emails found.
 
 #### **WhatsApp**
 
 ```javascript
-// 1. Clase específica del sitio
+// 1. Site-specific class
 if (li.classList.contains('cwhats-small')) whatsapp = text;
 
-// 2. Enlaces de WhatsApp
+// 2. WhatsApp links
 document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach(a => {
   const match = a.href.match(/(\+?\d{10,15})/);
   if (match) whatsapp = match[1];
 });
 ```
 
-**Resultado**: WhatsApp donde esté disponible.
+**Result**: WhatsApp where available.
 
-#### **Teléfonos de Contacto**
+#### **Contact Phones**
 
 ```javascript
-// Regex para formato español: +34 XXX XX XX XX o 9XX XX XX XX
+// Regex for Spanish format: +34 XXX XX XX XX or 9XX XX XX XX
 const phoneRegex = /(\+34\s?)?[96]\d{2}\s?\d{2}\s?\d{2}\s?\d{2}/g;
 const phones = fullText.match(phoneRegex);
 ```
 
-**Resultado**: Captura teléfonos fijos y móviles españoles.
+**Result**: Captures Spanish landlines and mobiles.
 
-#### **Sede (Provincia)**
+#### **Location (Province)**
 
 ```javascript
 const provinces = [
   'A Coruña', 'Álava', 'Albacete', 'Alicante', 'Almería', 
   'Asturias', 'Ávila', 'Badajoz', 'Barcelona', 'Burgos',
-  // ... 52 provincias españolas
+  // ... 52 Spanish provinces
 ];
 
 for (const p of provinces) { 
@@ -290,9 +290,9 @@ for (const p of provinces) {
 }
 ```
 
-**Resultado**: Detecta la primera provincia mencionada.
+**Result**: Detects the first mentioned province.
 
-#### **Tipo de Proveedor**
+#### **Provider Type**
 
 ```javascript
 const pageText = fullText.toLowerCase();
@@ -307,225 +307,176 @@ if (pageText.includes('exportador') || pageText.includes('exportamos'))
   types.push('Exportadores');
 ```
 
-**Resultado**: Clasificación automática basada en palabras clave.
+**Result**: Automatic classification based on keywords.
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 webscrapper/
 │
-├── scrape.js                    # ⭐ Script principal (usar este)
-├── package.json                 # Dependencias del proyecto
-├── package-lock.json            # Lock de dependencias
-├── README.md                    # Esta documentación
-├── .gitignore                   # Archivos ignorados por git
+├── scrape.js                    # ⭐ Main script (use this)
+├── package.json                 # Project dependencies
+├── package-lock.json            # Dependency lock
+├── README.md                    # This documentation
+├── USAGE.md                     # Quick usage guide
+├── .gitignore                   # Git ignored files
 │
-├── src/                         # Scripts auxiliares (legacy)
-│   ├── scraper-turbo.js        # Scraper con múltiples categorías
-│   ├── scraper-all.js          # Scraper para todas las categorías
-│   ├── scraper-category.js     # Scraper por categoría específica
-│   ├── scraper-continue.js     # Continuar scraping interrumpido
-│   └── update-consolidado.js   # Actualizar archivo consolidado
-│
-├── output/                      # 📂 Archivos Excel generados
-│   ├── .gitkeep               
-│   └── *.xlsx                  # (ignorado por git)
-│
-└── FMCG_Leads_Por_Categoria/   # 📂 Archivos organizados por categoría
-    └── *.xlsx                  # (ignorado por git)
+└── output/                      # 📂 Generated Excel files
+    ├── .gitkeep               
+    └── *.xlsx                   # (ignored by git)
 ```
 
 ---
 
-## 📝 Ejemplos
+## 🛠️ Configuration
 
-### Ejemplo 1: Scrapear Verduras
+### Adjust Parallelism
 
-```bash
-node scrape.js https://www.proveedores.com/verduras/
+In `scrape.js`, line 31:
+
+```javascript
+const CONFIG = {
+  PARALLEL_TABS: 2,  // Change to 3 or 4 for higher speed
+                     // (higher detection risk)
+  ...
+};
 ```
 
-**Resultado:**
-```
-✅ Leads exitosos: 575
-⏱️  Tiempo total: 23.4 min
-📊 Velocidad: 24.6 leads/min
-💾 Archivo: output/verduras_1704819234567.xlsx
+⚠️ **Recommendation**: Keep at 2 to avoid detection.
+
+### Adjust Delays
+
+In `scrape.js`, line 32:
+
+```javascript
+const CONFIG = {
+  ...
+  DELAY_MS: 800,  // Reduce for faster scraping
+                  // Increase for more stealth
+  ...
+};
 ```
 
-### Ejemplo 2: Scrapear Productos Lácteos
+### Page Timeout
 
-```bash
-node scrape.js https://www.proveedores.com/productos-lacteos/
-```
+In `scrape.js`, line 33:
 
-**Resultado:**
-```
-✅ Leads exitosos: 1224
-⏱️  Tiempo total: 47.5 min
-📊 Velocidad: 25.8 leads/min
-💾 Archivo: output/productos_lacteos_1704819345678.xlsx
-```
-
-### Ejemplo 3: Scrapear Té e Infusiones
-
-```bash
-node scrape.js https://www.proveedores.com/te-e-infusiones/
-```
-
-**Resultado:**
-```
-✅ Leads exitosos: 501
-⏱️  Tiempo total: 19.7 min
-📊 Velocidad: 25.4 leads/min
-💾 Archivo: output/te_e_infusiones_1704819456789.xlsx
+```javascript
+const CONFIG = {
+  ...
+  TIMEOUT: 45000,  // 45 seconds
+                   // Increase if getting timeout errors
+  ...
+};
 ```
 
 ---
 
-## 📊 Resultados
+## 📊 Expected Results
 
-### Datos Extraídos
+### Extracted Data
 
-Cada lead contiene:
+Each lead contains:
 
-| Campo | Descripción | Cobertura |
-|-------|-------------|-----------|
-| **Name** | Nombre del proveedor | 100% |
-| **Email** | Correo electrónico | ~100% |
-| **WhatsApp** | Número de WhatsApp | Variable |
-| **Contacts** | Teléfonos de contacto | 100% |
-| **SEDE** | Provincia/ubicación | 100% |
-| **Tipo de Proveedor** | Clasificación | ~90% |
-| **Category** | Categoría del producto | 100% |
-| **URL** | Link al proveedor | 100% |
+| Field | Description | Coverage |
+|-------|-------------|----------|
+| **Name** | Provider name | 100% |
+| **Email** | Email address | ~100% |
+| **WhatsApp** | WhatsApp number | Variable |
+| **Contacts** | Contact phones | 100% |
+| **SEDE** | Province/location | 100% |
+| **Tipo de Proveedor** | Provider type | ~90% |
+| **Category** | Product category | 100% |
+| **URL** | Provider link | 100% |
 
-### Formato Excel
+### Excel Format
 
 ```
 ┌──────────────────────────────────┬─────────────────────┬────────────┐
 │ Name                             │ Email               │ WhatsApp   │
 ├──────────────────────────────────┼─────────────────────┼────────────┤
-│ Verduras Frescas SA              │ info@verduras.com   │ 612345678  │
-│ Hortalizas del Norte             │ ventas@hortali.es   │            │
-│ Frutas y Verduras Martinez       │ info@martinez.com   │ 699876543  │
+│ Company Name SA                  │ info@company.com    │ 612345678  │
+│ Provider Example SL              │ sales@provider.es   │            │
+│ Example Corporation              │ contact@example.com │ 699876543  │
 └──────────────────────────────────┴─────────────────────┴────────────┘
 
 ┌──────────────────────┬────────────┬─────────────────────┬─────────────┐
 │ Contacts             │ SEDE       │ Tipo de Proveedor   │ Category    │
 ├──────────────────────┼────────────┼─────────────────────┼─────────────┤
-│ 912345678 | 91234... │ Madrid     │ Distribuidores m... │ Verduras    │
-│ 945678901            │ Vizcaya    │ Fabricantes         │ Verduras    │
-│ 965432109 | 96543... │ Valencia   │ Distribuidores m... │ Verduras    │
+│ 912345678 | 91234... │ Madrid     │ Distribuidores m... │ Category    │
+│ 945678901            │ Vizcaya    │ Fabricantes         │ Category    │
+│ 965432109 | 96543... │ Valencia   │ Distribuidores m... │ Category    │
 └──────────────────────┴────────────┴─────────────────────┴─────────────┘
 ```
 
-### Estadísticas de Rendimiento
+### Performance Metrics
 
-Basado en 2,736 leads scrapeados en 7 categorías:
-
-- **Velocidad promedio**: ~26 leads/minuto
-- **Tasa de éxito**: 100% (0 errores de Cloudflare)
-- **URLs fallidas**: <1% (errores de red, páginas caídas)
-- **Tiempo por lead**: ~2.3 segundos
-- **Datos completos**: >95% de leads con todos los campos
-
-### Categorías Probadas ✅
-
-| # | Categoría | Leads | Tiempo | Estado |
-|---|-----------|-------|--------|---------|
-| 1 | Productos de IV Gama | 122 | 4.8 min | ✅ |
-| 2 | Platos Preelaborados | 184 | 7.1 min | ✅ |
-| 3 | Productos Lácteos | 1,224 | 47.5 min | ✅ |
-| 4 | Té e Infusiones | 501 | 19.7 min | ✅ |
-| 5 | Semillas Comestibles | 77 | 3.2 min | ✅ |
-| 6 | Toppings | 53 | 2.1 min | ✅ |
-| 7 | Verduras | 575 | 23.4 min | ✅ |
-
-**Total: 2,736 leads en ~107 minutos**
+- **Average speed**: ~26 leads/minute
+- **Success rate**: 100% (0 Cloudflare errors)
+- **Failed URLs**: <1% (network errors, down pages)
+- **Time per lead**: ~2.3 seconds
+- **Complete data**: >95% of leads with all fields
 
 ---
 
-## 🛠️ Configuración Avanzada
+## ❓ Troubleshooting
 
-### Ajustar Paralelismo
+### Error: "Cannot find module..."
 
-En `scrape.js`, línea 31:
+```bash
+# Install dependencies
+npm install
+```
+
+### Error: "permission denied"
+
+```bash
+# Give execution permissions
+chmod +x scrape.js
+```
+
+### Excel doesn't open automatically
+
+The file is saved in `/output/`. Open it manually.
+
+### Timeout errors
+
+Increase timeout in `scrape.js`:
 
 ```javascript
 const CONFIG = {
-  PARALLEL_TABS: 2,  // Cambiar a 3 o 4 para mayor velocidad
-                     // (mayor riesgo de detección)
+  ...
+  TIMEOUT: 60000,  // 60 seconds
   ...
 };
 ```
 
-⚠️ **Recomendación**: Mantener en 2 para evitar detección.
+### Too slow
 
-### Ajustar Delays
-
-En `scrape.js`, línea 32:
+Increase parallelism (with caution):
 
 ```javascript
 const CONFIG = {
-  ...
-  DELAY_MS: 800,  // Reducir para ir más rápido
-                  // Aumentar para ser más sigiloso
-  ...
-};
-```
-
-### Timeout de Página
-
-En `scrape.js`, línea 33:
-
-```javascript
-const CONFIG = {
-  ...
-  TIMEOUT: 45000,  // 45 segundos
-                   // Aumentar si hay errores de timeout
+  PARALLEL_TABS: 3,  // Or 4
   ...
 };
 ```
 
 ---
 
-## 🤝 Contribución
+## 📄 License
 
-Este es un proyecto interno del equipo FMCG. Para mejoras:
-
-1. Crear una rama: `git checkout -b feature/mejora`
-2. Hacer cambios y commit: `git commit -am 'Descripción'`
-3. Push: `git push origin feature/mejora`
-4. Crear Pull Request
+Private use
 
 ---
 
-## 📄 Licencia
+## 📞 Support
 
-Uso interno - FMCG Team
-
----
-
-## 📞 Soporte
-
-Para dudas o problemas, contactar al equipo de desarrollo.
+For questions or issues, contact the development team.
 
 ---
 
-## 🎯 Roadmap
-
-- [ ] Soporte para más sitios web
-- [ ] Dashboard web para monitoreo en tiempo real
-- [ ] Base de datos para almacenar leads
-- [ ] API REST para integración con CRM
-- [ ] Detección de duplicados
-- [ ] Validación de emails
-
----
-
-**Última actualización**: Enero 2026  
-**Versión**: 2.0.0  
-**Autor**: FMCG Team
+**Last update**: January 2026  
+**Version**: 2.0.0
